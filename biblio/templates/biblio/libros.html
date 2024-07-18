@@ -1,0 +1,89 @@
+{% extends "biblio/index.html" %}
+
+
+
+{% block titulo %}
+<span>
+<h1>Sumá tus libros a nuestro catalogo y ganá una comision</h1>
+<p>Decinos qué libros queres prestar y nosotros nos encargamos del resto</p>
+</span>
+{% endblock titulo %}
+
+
+
+{% block contenido %}
+<table>
+
+    <tr>
+
+        <td width="200"><h2>Cursos</h2></td>
+
+        <td>
+
+            <a
+
+            href="{% url 'librosForm' %}"
+
+            class="btn btn-primary btn-sm"
+
+            ><i class="fa fa-plus fa-lg" title="Crear"> </i>
+
+            </a>
+
+        </td>        
+
+    </tr>
+
+</table>
+
+<table class="table table-striped"> 
+    <thead>
+        <tr>
+            <th>Id</td>
+            <th>Titulo</td>
+            <th>Autor</th>
+            <th>Anio</th>
+            <th>Genero</th>
+            <th>Editar/Borrar</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for l in libros %}
+        <tr>
+            <td>{{ l.id }}</td>
+            <td>{{ l.titulo }}</td>
+            <td>{{ l.autor }}</td>
+            <td>{{ l.anio }}</td>
+            <td>{{ l.genero }}</td>
+            <td>
+
+                <a
+
+                  href="{% url 'libroUpdate' l.id %}"
+
+                  class="btn btn-primary"
+
+                  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+
+                  ><i class="fa-solid fa-pencil" title="Editar"></i>
+
+                </a>
+
+                <a
+
+                  href="{% url 'libroDelete' l.id %}"
+
+                  class="btn btn-danger"
+
+                  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+
+                  ><i class="fa-solid fa-eraser" title="Borrar"></i>
+
+                </a>                
+
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock contenido %}

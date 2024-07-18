@@ -1,0 +1,62 @@
+{% extends "biblio/index.html" %}
+
+
+
+{% block titulo %}
+<h2>Direcciones</h2>
+<p>Ingresa hasta 3 direcciones en donde podes recibir tus libros</p>
+</span>
+{% endblock titulo %}
+
+
+
+{% block contenido %}
+
+<table class="table table-striped"> 
+    <thead>
+        <tr>
+
+            <td width="200"><h2>Cursos</h2></td>
+    
+            <td>
+    
+                <a
+    
+                href="{% url 'direccionesForm' %}"
+    
+                class="btn btn-primary btn-sm"
+    
+                ><i class="fa fa-plus fa-lg" title="Crear"> </i>
+    
+                </a>
+    
+            </td>        
+    
+        </tr>
+        <tr>
+            <th>Id</td>
+            <th>Calle</td>
+            <th>Altura</th>
+            <th>Timbre</th>
+            <th>Barrio</th>
+            <th>Nombre</th>
+            <th>Telefono</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for d in direcciones %}
+        <tr>
+            <td>{{ d.id }}</td>
+            <td>{{ d.calle }}</td>
+            <td>{{ d.altura }}</td>
+            <td>{{ d.timbre }}</td>
+            <td>{{ d.barrio }}</td>
+            <td>{{ d.nombre }}</td>
+            <td>{{ d.telefono }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock contenido %}
+    
+  
