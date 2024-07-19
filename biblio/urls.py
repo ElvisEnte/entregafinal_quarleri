@@ -1,9 +1,10 @@
 from django.urls import path
 from biblio.views import *
-
+from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path('', home, name="home"),
+    
     
     ## Libros
     path('libros/', libros, name="libros"),
@@ -19,4 +20,9 @@ urlpatterns = [
     ## Proveedores
     path('direcciones/', direcciones, name="direcciones"),
     path('direccionForm/', direccionesForm, name="direccionesForm"),
+    
+    #___ Login / Logout / Registration
+    path('login/', loginRequest, name="login"),
+    path('logout/', LogoutView.as_view(template_name="biblio/logout.html"), name="logout"),
+    path('crear/', crearUsuario, name="crear"),
 ]

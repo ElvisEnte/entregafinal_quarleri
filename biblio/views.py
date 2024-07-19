@@ -1,9 +1,15 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse
 from biblio.models import *
 from biblio.forms import *
 from django.views.generic import ListView
+from django.views.generic import CreateView
 
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import AuthenticationForm
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def home(request):
@@ -12,12 +18,12 @@ def home(request):
 
 
 ## _____Usuarios
-
+@login_required
 def usuarios(request):
     usuarios = Usuario.objects.all()
     contexto = {"usuarios": usuarios}
     return render(request, "biblio/usuarios.html", contexto)
-
+@login_required
 def usuariosForm(request):
     
     if request.method == "POST":
@@ -38,13 +44,13 @@ def usuariosForm(request):
 
 
 ## Libros
-
+@login_required
 def libros(request):
     libros = Libro.objects.all()
     contexto = {"libros": libros}
     return render(request, "biblio/libros.html", contexto)
 
-
+@login_required
 def librosForm(request):
     
     if request.method == "POST":
@@ -63,7 +69,7 @@ def librosForm(request):
     
     return render(request, "biblio/librosForm.html", {"form": miForm})
 
-
+@login_required
 def libroUpdate(request, id_libro):
     libro = Libro.objects.get(id=id_libro)
     if request.method == "POST":
@@ -80,19 +86,19 @@ def libroUpdate(request, id_libro):
         miForm = LibroForm(initial={"titulo": libro.titulo, "autor": libro.autor, "anio": libro.anio, "genero": libro.genero})
 
     return render(request, "biblio/librosForm.html", {"form": miForm})
-
+@login_required
 def libroDelete(request, id_libro):
     libro = Libro.objects.get(id=id_libro)
     libro.delete()
     contexto = {"libros": Libro.objects.all() }
     return render(request, "biblio/libros.html", contexto)
 
-## Proveedores
-
+## Direcciones
+@login_required
 def direcciones(request):
     contexto = {"direcciones": Direccion.objects.all()}
     return render(request, "biblio/direcciones.html", contexto)
-
+@login_required
 def direccionesForm(request):
     
     if request.method == "POST":
@@ -115,7 +121,7 @@ def direccionesForm(request):
     return render(request, "biblio/direccionForm.html", {"form": miForm})
 
 ## Buscar
-
+@login_required
 def buscarLibros(request):
     return render(request, "negocio/buscarLibros.html")
 
@@ -128,3 +134,38 @@ def encontrarlibros(request):
         contexto = {'libros': Libro.objects.all()}
         
     return render(request, "negocio/libros.html", contexto)
+
+#___ Login / Logout / Registration
+
+def loginRequest(request):
+    if request.method == "POST":
+        usuario = request.POST["username"]
+        clave = request.POST["password"]
+        user = authenticate(request, username=usuario, password=clave)
+        if user is not None:
+            login(request, user)
+            return render(request, "biblio/index.html")
+        else:
+            return redirect(reverse('login'))
+    else:
+        miForm = AuthenticationForm()
+        
+        return render(request, "biblio/login.html", {"form": miForm})
+    
+def crearUsuario(request):
+    if request.method == "POST":
+        miForm = CrearUsuarioForm(request.POST)
+        if miForm.is_valid():
+            try:
+                miForm.save()
+                return redirect(reverse('home'))
+            except Exception as e:
+                print(f"Error al guardar el formulario: {e}")
+                return render(request, "biblio/crearUsuario.html", {"form": miForm})
+        else:
+            print(f"Errores en el formulario: {miForm.errors}")
+            return render(request, "biblio/crearUsuario.html", {"form": miForm})
+    else:
+        miForm = CrearUsuarioForm()
+        
+        return render(request, "biblio/crearUsuario.html", {"form": miForm})
