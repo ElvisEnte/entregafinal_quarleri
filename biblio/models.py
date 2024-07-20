@@ -25,6 +25,7 @@ class Usuario(models.Model):
     telefono = models.IntegerField()
     avatar = models.ImageField(upload_to='avatars/',null=True, blank=True)
     
+
     def __str__(self):
         return f"{self.nombre}"
     
