@@ -25,4 +25,7 @@ urlpatterns = [
     path('login/', loginRequest, name="login"),
     path('logout/', LogoutView.as_view(template_name="biblio/logout.html"), name="logout"),
     path('crear/', crearUsuario, name="crear"),
+    path('perfil/', editarUsuario, name="perfil"),
+    path('<int:pk>/password/', CambiarPass.as_view(template_name="biblio/cambiar_pass.html"), name="password"),
+    path('crearAvatar/', crearAvatar, name="crearAvatar"),
 ]

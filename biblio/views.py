@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from biblio.models import *
 from biblio.forms import *
 from django.views.generic import ListView
@@ -7,6 +7,7 @@ from django.views.generic import CreateView
 
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.views import PasswordChangeView
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -144,13 +145,22 @@ def loginRequest(request):
         user = authenticate(request, username=usuario, password=clave)
         if user is not None:
             login(request, user)
+
+            # Avatar
+            try: 
+                avatar = Avatar.objects.get(user=request.user.id).imagen.url
+            except:
+                avatar = "/media/avatares/default.png"
+            finally:
+                request.session["avatar"] = avatar
+
             return render(request, "biblio/index.html")
         else:
-            return redirect(reverse('login'))
+            return redirect(reverse_lazy('login'))
     else:
         miForm = AuthenticationForm()
         
-        return render(request, "biblio/login.html", {"form": miForm})
+    return render(request, "biblio/login.html", {"form": miForm})
     
 def crearUsuario(request):
     if request.method == "POST":
@@ -169,3 +179,48 @@ def crearUsuario(request):
         miForm = CrearUsuarioForm()
         
         return render(request, "biblio/crearUsuario.html", {"form": miForm})
+    
+@login_required
+def editarUsuario(request):
+    usuario = request.user
+    if request.method == "POST":
+        miForm = EditarForm(request.POST)
+        if miForm.is_valid():
+            user = User.objects.get(username=usuario)
+            user.email = miForm.cleaned_data.get("email")
+            user.first_name = miForm.cleaned_data.get("nombre")
+            user.last_name = miForm.cleaned_data.get("apellido")
+            user.save()
+            return redirect(reverse("home"))
+    else:
+        miForm = EditarForm(instance=usuario)
+    return render(request, "biblio/editarUsuario.html", {"form": miForm})
+
+class CambiarPass(LoginRequiredMixin, PasswordChangeView):
+    template_name = "biblio/cambiar_pass/html"
+    success_url = reverse_lazy("home")
+
+
+
+@login_required
+def crearAvatar(request):
+    usuario = request.user
+    if request.method == "POST":
+        miForm = AvatarForm(request.POST, request.FILES)
+        if miForm.is_valid():
+            usuario = User.objects.get(username=request.user)
+            imagen = miForm.cleaned_data["imagen"]
+            avatarAnterior = Avatar.objects.filter(user=usuario)
+            if len(avatarAnterior) > 0:
+                for i in range(len(avatarAnterior)):
+                    avatarAnterior[i].delete()
+            avatar = Avatar(user=usuario, imagen=imagen)
+            avatar.save()
+            #Enviar la imagen a la home
+            imagen = Avatar.objects.get(user=usuario).imagen.url
+            request.session["avatar"] = imagen
+
+            return redirect(reverse_lazy("home"))
+    else:
+        miForm = AvatarForm()
+    return render(request, "biblio/agregar_avatar.html", {"form": miForm})
