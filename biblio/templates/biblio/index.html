@@ -39,13 +39,12 @@
 	          
 
               {% if user.is_authenticated %}
-              
+              <a href="{% url 'crearAvatar' %}">
+                <img src="{{ request.session.avatar }}" height="40px" weight="40px" alt="mi foto"></a>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Bienvenido [{{ user.username }}]             
-                    <a href="{% url 'crearAvatar' %}">
-                      <img src="{{ request.session.avatar }}" height="40px" weight="40px" alt="mi foto"></a>
-                     
+                                        
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="{% url 'perfil' %}">Editar Perfil</a>                

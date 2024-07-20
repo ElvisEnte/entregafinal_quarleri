@@ -210,6 +210,7 @@ def crearAvatar(request):
         if miForm.is_valid():
             usuario = User.objects.get(username=request.user)
             imagen = miForm.cleaned_data["imagen"]
+            
             avatarAnterior = Avatar.objects.filter(user=usuario)
             if len(avatarAnterior) > 0:
                 for i in range(len(avatarAnterior)):
