@@ -22,7 +22,6 @@ class Usuario(models.Model):
     direccion = models.CharField(max_length=250)
     email = models.EmailField()
     telefono = models.IntegerField()
-    avatar = models.ImageField(upload_to='avatars/',null=True,blank=True)
     def __str__(self):
         return f"{self.nombre}"
     
