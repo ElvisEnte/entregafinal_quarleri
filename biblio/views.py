@@ -97,19 +97,27 @@ def favoritosForm(request):
 
 def favoritosUpdate(request, id_favoritos):
     favoritos = Favorito.objects.get(id=id_favoritos)
+
     if request.method == "POST":
         miForm = FavoritosForm(request.POST)
-        if miForm.is_valid():
-            titulo_favorito = miForm.cleaned_data.get("titulo")
-            autor_favorito = miForm.cleaned_data.get("autor")
-            anio_favorito = miForm.cleaned_data.get("año")
-            genero_favorito = miForm.cleaned_data.get("genero")
-            favoritos = Favorito(titulo=titulo_favorito, autor=autor_favorito, anio=anio_favorito, genero=genero_favorito)
+        if miForm.is_valid():        
+            favoritos.titulo = miForm.cleaned_data.get("titulo")
+            favoritos.autor = miForm.cleaned_data.get("autor")
+            favoritos.anio = miForm.cleaned_data.get("año")
+            favoritos.genero = miForm.cleaned_data.get("genero")
             favoritos.save()
-            contexto = {"favoritos": Favorito.objects.all() }
+          
+            contexto = {"favoritos": Favorito.objects.all()}
             return render(request, "biblio/favoritosUpdate.html", contexto)
     else:
-        miForm = FavoritosForm(initial={"titulo": titulo_favorito, "autor": autor_favorito, "anio": anio_favorito, "genero": genero_favorito})
+        miForm = FavoritosForm(initial={
+            "titulo": favoritos.titulo,
+            "autor": favoritos.autor,
+            "año": favoritos.anio,
+            "genero": favoritos.genero
+        })
+
+    return render(request, "biblio/favoritosForm.html", {"form": miForm})
 
 @login_required
 def favoritosDelete(request, id_favoritos):
@@ -198,23 +206,28 @@ def direccionesForm(request):
 @login_required
 def direccionUpdate(request, id_direccion):
     direcciones = Direccion.objects.get(id=id_direccion)
+
     if request.method == "POST":
         miForm = DireccionesForm(request.POST)
         if miForm.is_valid():
-            direcciones_calle = miForm.cleaned_data.get("calle")
-            direcciones_altura = miForm.cleaned_data.get("altura")
-            direcciones_timbre = miForm.cleaned_data.get("timbre")
-            direcciones_barrio = miForm.cleaned_data.get("barrio")
-            direcciones_nombre = miForm.cleaned_data.get("nombre")
-            direcciones_telefono = miForm.cleaned_data.get("telefono")
-            direcciones = Direccion(calle=direcciones_calle, altura=direcciones_altura, timbre=direcciones_timbre, barrio=direcciones_barrio,
-                                  nombre=direcciones_nombre, telefono=direcciones_telefono)
+            direcciones.calle = miForm.cleaned_data.get("calle")
+            direcciones.altura = miForm.cleaned_data.get("altura")
+            direcciones.timbre = miForm.cleaned_data.get("timbre")
+            direcciones.barrio = miForm.cleaned_data.get("barrio")
+            direcciones.nombre = miForm.cleaned_data.get("nombre")
+            direcciones.telefono = miForm.cleaned_data.get("telefono")
             direcciones.save()
-            contexto = {"direcciones": Direccion.objects.all() }
+            contexto = {"direcciones": Direccion.objects.all()}
             return render(request, "biblio/direcciones.html", contexto)
-    else:
-        miForm = DireccionesForm(initial={"calle": direcciones_calle, "altura": direcciones_altura, "timbre": direcciones_timbre, "barrio": direcciones_barrio,
-                                         "nombre": direcciones_nombre, "telefono": direcciones_telefono })
+    else:        
+        miForm = DireccionesForm(initial={
+            "calle": direcciones.calle,
+            "altura": direcciones.altura,
+            "timbre": direcciones.timbre,
+            "barrio": direcciones.barrio,
+            "nombre": direcciones.nombre,
+            "telefono": direcciones.telefono
+        })
 
     return render(request, "biblio/direccionForm.html", {"form": miForm})
 @login_required
