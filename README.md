@@ -53,3 +53,6 @@ El proyecto utiliza las siguientes rutas URL para navegar entre las diferentes f
 user: admin
 password: 12345
 
+
+### Link al video de muestra
+https://drive.google.com/file/d/1p2JGkZ3TRD00NYxdSTgBcO1a-tvTetF4/view?usp=sharing
