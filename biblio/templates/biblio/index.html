@@ -47,8 +47,8 @@
                                         
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="{% url 'perfil' %}">Editar Perfil</a>                
-                    <a class="dropdown-item" href="#">Ajustes</a>
+                    <a class="dropdown-item" href="{% url 'perfil' %}">Editar Perfil</a>   
+                    
                     <div class="dropdown-divider"></div>
                     <form method="post" action="{% url 'logout' %}">
                       {% csrf_token %}
@@ -119,9 +119,8 @@
             <div class="ftco-footer-widget mb-4">
               <h2 class="ftco-heading-2">Links</h2>
               <ul class="list-unstyled">
-                <li><a href="#"></span>Inicio</a></li>
-                <li><a href="{% url 'acerca_de' %}"></span>Acerca de</a></li>
-                <li><a href="#"></span>Contacto</a></li>
+                <li><a href="{% url 'home' %}"></span>Inicio</a></li>
+                <li><a href="{% url 'acerca_de' %}"></span>Acerca de</a></li>              
                 <a href="https://www.flaticon.es/iconos-gratis/chico" title="chico iconos">Chico iconos creados por Flat Icons - Flaticon</a>
               </ul>
             </div>
