@@ -69,6 +69,7 @@
                           <a class="navbar-link"><a href="{% url 'libros' %}" class="btn btn-primary py-3 px-2"><span>Libros</a></a>
                   
               {% else %}
+              <a class="btn btn-primary py-2 px-2" href="{% url 'catalogo' %}">Ver catalogo</a>
               <a class="btn btn-primary py-2 px-2" href="{% url 'login' %}">Login</a>
               
               <a class="btn btn-primary py-2 px-2" href="{% url 'crear' %}">Crear usuario</a>
@@ -95,9 +96,8 @@
                   <div class="text mt-5">
                       {% block titulo %}
                       <span class="subheading">Delivery de libros</span>
-                      <h1>¿Estas listo para elegir un libro y que te lo lleven a tu casa?</h1>
-                      <p>Vos elegís por cuánto tiempo lo queres tener. Cuando lo terminas, lo pasamos a buscar</p>
-                      <p><a href="{% url 'catalogo' %}" class="btn btn-primary py-3 px-4">Ver catalogo</a></p>
+                      <h2>¿Estas listo para elegir un libro y que te lo lleven a tu casa?</h2>
+                      <p>Vos elegís por cuánto tiempo lo queres tener. Cuando lo terminas, lo pasamos a buscar</p>                  
                       {% endblock titulo %}
                   </div>
               </div>
@@ -120,7 +120,7 @@
               <h2 class="ftco-heading-2">Links</h2>
               <ul class="list-unstyled">
                 <li><a href="#"></span>Inicio</a></li>
-                <li><a href="#"></span>Acerca de</a></li>
+                <li><a href="{% url 'acerca_de' %}"></span>Acerca de</a></li>
                 <li><a href="#"></span>Contacto</a></li>
                 <a href="https://www.flaticon.es/iconos-gratis/chico" title="chico iconos">Chico iconos creados por Flat Icons - Flaticon</a>
               </ul>

@@ -1,19 +1,18 @@
 {% extends "biblio/index.html" %}
 
 
-
 {% block titulo %}
 <h1><span>Buscar Libros</span></h1>
 {% endblock titulo %}
 
-
+{% load static %}
 
 {% block contenido %}
+
 <form action="{% url 'encontrarlibros' %}" method="get">
-    {% csrf_token %}
-<table>
-   <p>Qué libro estas buscando?<input type="text" name="buscar" id="buscar"></p>
-</table>
-<input type="submit" value="Buscar">
+    <label for="buscar">Qué libro estás buscando?</label>
+    <input type="text" name="buscar" id="buscar" placeholder="Buscar libros...">
+    <input type="submit" value="Buscar">
 </form>
+
 {% endblock contenido %}

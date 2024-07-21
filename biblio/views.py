@@ -18,6 +18,9 @@ from django.contrib.auth.decorators import login_required
 def home(request):
     return render(request, "biblio/index.html")
 
+def acerca_de(request):
+    return render(request, "biblio/acerca_de.html")
+
 #____Catalogo
 def catalogo(request):
     catalogo = 'datos/best_sellers.xlsx'
@@ -53,18 +56,18 @@ def catalogo(request):
     return render(request, "biblio/catalogo.html", {"catalogo": libros})
 
 ## Buscar
-@login_required
 def buscarLibros(request):
     return render(request, "biblio/buscarLibros.html")
 
 def encontrarlibros(request):
-    if request.GET["buscar"]:
-        libro = request.GET["buscar"]
-        titulos = LibroCatalogo.objects.filter(titulo__icontains=libro)
-        contexto = {'libros': titulos}
+    query = request.GET.get("buscar", "").strip()
+    if query:
+        libros = LibroCatalogo.objects.filter(titulo__icontains=query)
     else:
-        contexto = {'libros': LibroCatalogo.objects.all()}
-        
+        libros = LibroCatalogo.objects.all()
+    
+    print("Libros encontrados:", libros)
+    contexto = {'catalogo': libros}
     return render(request, "biblio/catalogo.html", contexto)
 
 ## _____Favoritos
