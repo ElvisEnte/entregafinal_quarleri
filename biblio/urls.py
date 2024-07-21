@@ -5,6 +5,8 @@ from django.contrib.auth.views import LogoutView
 urlpatterns = [
     path('', home, name="home"),
     
+    ## Catalogo
+    path('catalogo/', catalogo, name="catalogo"),
     
     ## Libros
     path('libros/', libros, name="libros"),
@@ -13,15 +15,19 @@ urlpatterns = [
     path('encontrarlibros/', encontrarlibros, name="encontrarlibros"),
     path('libroUpdate/<id_libro>', libroUpdate, name="libroUpdate"),
     path('libroDelete/<id_libro>', libroDelete, name="libroDelete"),
-    ## Usuarios
-    path('usuarioForm/', usuariosForm, name="usuarioForm"),
-    path('usuarios/', usuarios, name="usuarios"),
+    ## Favoritos
+    path('favoritosForm/', favoritosForm, name="favoritosForm"),
+    path('favoritos/', favoritos, name="favoritos"),
+    path('favoritosUpdate/<int:id_favoritos>', favoritosUpdate, name="favoritosUpdate"),
+    path('favoritosDelete/<id_favoritos>', favoritosDelete, name="favoritosDelete"),
     
-    ## Proveedores
+    ## Direcciones
     path('direcciones/', direcciones, name="direcciones"),
     path('direccionForm/', direccionesForm, name="direccionesForm"),
+    path('direccionUpdate/<int:id_direccion>', direccionUpdate, name="direccionUpdate"),
+    path('direccionDelete/<int:id_direccion>', direccionDelete, name="direccionDelete"),
     
-    #___ Login / Logout / Registration
+    #___ Login / Logout / Registration / Password / Avatar
     path('login/', loginRequest, name="login"),
     path('logout/', LogoutView.as_view(template_name="biblio/logout.html"), name="logout"),
     path('crear/', crearUsuario, name="crear"),

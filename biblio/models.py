@@ -18,18 +18,30 @@ class Direccion(models.Model):
         verbose_name = "Direccion"
         verbose_name_plural = "Direcciones"
     
-class Usuario(models.Model):
-    nombre = models.CharField(max_length=50)
-    direccion = models.CharField(max_length=250)
-    email = models.EmailField()
-    telefono = models.IntegerField()
-    avatar = models.ImageField(upload_to='avatars/',null=True, blank=True)
+class Favorito(models.Model):
+    titulo = models.CharField(max_length=50)
+    autor = models.CharField(max_length=250)
+    anio = models.IntegerField()
+    genero = models.CharField(max_length=50)
     
 
     def __str__(self):
-        return f"{self.nombre}"
+        return f"{self.titulo}"
     
-class Libro(models.Model):
+class LibroCatalogo(models.Model):
+    titulo = models.CharField(max_length=200)
+    autor = models.CharField(max_length=100)
+    anio = models.IntegerField()
+    genero = models.CharField(max_length=100)
+    portada = models.ImageField(upload_to='portadas/',null=True, blank=True)
+    
+    def __str__(self):
+        return f"{self.titulo}"
+    
+    class Meta:
+        ordering = ["titulo", "autor"]
+
+class LibroUsuario(models.Model):
     titulo = models.CharField(max_length=200)
     autor = models.CharField(max_length=100)
     anio = models.IntegerField()

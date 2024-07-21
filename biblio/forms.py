@@ -2,11 +2,11 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
-class UsuarioForm(forms.Form):
-    nombre = forms.CharField(max_length=50, required=True)
-    direccion = forms.CharField(max_length=200, required=True)
-    email = forms.CharField(max_length=100, required=True)
-    telefono = forms.IntegerField(required=True)
+class FavoritosForm(forms.Form):
+    titulo = forms.CharField(max_length=50, required=True)
+    autor = forms.CharField(max_length=200, required=True)
+    año = forms.IntegerField(required=True)
+    genero = forms.CharField(max_length=100, required=True)
     
 class DireccionesForm(forms.Form):
     calle = forms.CharField(max_length=200, required=True)

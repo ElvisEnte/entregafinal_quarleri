@@ -1,0 +1,86 @@
+{% extends "biblio/index.html" %}
+
+
+
+{% block titulo %}
+<span></span>
+<h2>Arma tu lista de favoritos</h2>
+{% endblock titulo %}
+
+
+
+{% block contenido %}
+<table>
+    <tr>
+
+        <td width="200"><h2>Favoritos</h2></td>
+
+        <td>
+
+            <a
+
+            href="{% url 'favoritosForm' %}"
+
+            class="btn btn-primary btn-sm"
+
+            ><i class="fa fa-plus fa-lg" title="Crear"> </i>
+
+            </a>
+
+        </td>        
+
+    </tr>
+</table>
+<table class="table table-striped"> 
+    <thead>
+        <tr>
+            <th>Id</td>
+            <th>titulo</td>
+            <th>Autor</th>
+            <th>Año</th>
+            <th>Genero</th>
+            <th>Editar/Borrar</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for f in favoritos %}
+        <tr>
+            <td>{{ f.id }}</td>
+            <td>{{ f.titulo }}</td>
+            <td>{{ f.autor }}</td>
+            <td>{{ f.anio }}</td>
+            <td>{{ f.genero }}</td>
+            <td>
+                 <a
+
+                href="{% url 'favoritosUpdate' f.id %}"
+
+                class="btn btn-primary"
+
+                style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+
+                ><i class="fa-solid fa-pencil" title="Editar"></i>
+
+            </a>
+
+            <a
+
+                href="{% url 'favoritosDelete' f.id %}"
+
+                class="btn btn-danger"
+
+                style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+
+                ><i class="fa-solid fa-eraser" title="Borrar"></i>
+
+            </a>   
+      
+            </td>
+        </tr>
+        
+
+
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock contenido %}

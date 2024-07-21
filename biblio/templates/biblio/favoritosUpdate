@@ -1,0 +1,8 @@
+{% extends "biblio/index.html" %}
+
+{% block titulo %}
+<span>
+<h1>Vas a encontrar el catalogo smas extenso</h1>
+<p>Lo mejor es que lo actualizamos constantemente</p>
+</span>
+{% endblock titulo %}

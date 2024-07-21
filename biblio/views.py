@@ -1,3 +1,5 @@
+import openpyxl
+from django.conf import settings,os
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from biblio.models import *
@@ -16,38 +18,107 @@ from django.contrib.auth.decorators import login_required
 def home(request):
     return render(request, "biblio/index.html")
 
+#____Catalogo
+def catalogo(request):
+    catalogo = 'datos/best_sellers.xlsx'
+    datos = openpyxl.load_workbook(catalogo)
+    hoja = datos.active
+    
 
+    for fila in hoja.iter_rows(min_row=2, values_only=True):
+        titulo, autor, anio, genero = fila
+        nombre_portada = f"{titulo}.png"
+        ruta_portada = os.path.join('portadas', nombre_portada)
+        default_cover_path = os.path.join('portadas', 'default.png')
+        if not LibroCatalogo.objects.filter(titulo=titulo, autor=autor, anio=anio, genero=genero).exists():
+            if os.path.exists(os.path.join(settings.MEDIA_ROOT, ruta_portada)):
+                LibroCatalogo.objects.create(
+                    titulo=titulo,
+                    autor=autor,
+                    anio=anio,
+                    genero=genero,
+                    portada=ruta_portada
+                )
+            else:
+                portada = default_cover_path
+                LibroCatalogo.objects.create(
+                    titulo=titulo,
+                    autor=autor,
+                    anio=anio,
+                    genero=genero,
+                    portada = portada
+                )
+    libros = LibroCatalogo.objects.all()
 
-## _____Usuarios
+    return render(request, "biblio/catalogo.html", {"catalogo": libros})
+
+## Buscar
 @login_required
-def usuarios(request):
-    usuarios = Usuario.objects.all()
-    contexto = {"usuarios": usuarios}
-    return render(request, "biblio/usuarios.html", contexto)
+def buscarLibros(request):
+    return render(request, "biblio/buscarLibros.html")
+
+def encontrarlibros(request):
+    if request.GET["buscar"]:
+        libro = request.GET["buscar"]
+        titulos = LibroCatalogo.objects.filter(titulo__icontains=libro)
+        contexto = {'libros': titulos}
+    else:
+        contexto = {'libros': LibroCatalogo.objects.all()}
+        
+    return render(request, "biblio/catalogo.html", contexto)
+
+## _____Favoritos
 @login_required
-def usuariosForm(request):
+def favoritos(request):
+    favoritos = Favorito.objects.all()
+    contexto = {"favoritos": favoritos}
+    return render(request, "biblio/favoritos.html", contexto)
+@login_required
+def favoritosForm(request):
     
     if request.method == "POST":
-        miForm = UsuarioForm(request.POST)
+        miForm = FavoritosForm(request.POST)
         if miForm.is_valid():
-            nombre_usuario = miForm.cleaned_data.get("nombre")
-            direccion_usuario = miForm.cleaned_data.get("direccion")
-            email_usuario = miForm.cleaned_data.get("email")
-            telefono_usuario = miForm.cleaned_data.get("telefono")
-            usuario = Usuario(nombre=nombre_usuario, direccion=direccion_usuario, email=email_usuario, telefono=telefono_usuario)
-            usuario.save()
-            contexto = {"usuarios": Usuario.objects.all() }
-            return render(request, "biblio/usuarios.html", contexto)
+            titulo_favorito = miForm.cleaned_data.get("titulo")
+            autor_favorito = miForm.cleaned_data.get("autor")
+            anio_favorito = miForm.cleaned_data.get("año")
+            genero_favorito = miForm.cleaned_data.get("genero")
+            nuevo_favorito = Favorito(titulo=titulo_favorito, autor=autor_favorito, anio=anio_favorito, genero=genero_favorito)
+            nuevo_favorito.save()
+            contexto = {"favoritos": Favorito.objects.all() }
+            return render(request, "biblio/favoritos.html", contexto)
     else:
-        miForm = UsuarioForm()
+        miForm = FavoritosForm()
     
-    return render(request, "biblio/usuarioForm.html", {"form": miForm})
+    return render(request, "biblio/favoritosForm.html", {"form": miForm})
 
+def favoritosUpdate(request, id_favoritos):
+    favoritos = Favorito.objects.get(id=id_favoritos)
+    if request.method == "POST":
+        miForm = FavoritosForm(request.POST)
+        if miForm.is_valid():
+            titulo_favorito = miForm.cleaned_data.get("titulo")
+            autor_favorito = miForm.cleaned_data.get("autor")
+            anio_favorito = miForm.cleaned_data.get("año")
+            genero_favorito = miForm.cleaned_data.get("genero")
+            favoritos = Favorito(titulo=titulo_favorito, autor=autor_favorito, anio=anio_favorito, genero=genero_favorito)
+            favoritos.save()
+            contexto = {"favoritos": Favorito.objects.all() }
+            return render(request, "biblio/favoritosUpdate.html", contexto)
+    else:
+        miForm = FavoritosForm(initial={"titulo": titulo_favorito, "autor": autor_favorito, "anio": anio_favorito, "genero": genero_favorito})
 
-## Libros
+@login_required
+def favoritosDelete(request, id_favoritos):
+    favoritos = Favorito.objects.get(id=id_favoritos)
+    favoritos.delete()
+    contexto = {"favoritos": Favorito.objects.all() }
+    return render(request, "biblio/favoritos.html", contexto)
+
+## Libros_usuario
 @login_required
 def libros(request):
-    libros = Libro.objects.all()
+    libros = LibroUsuario.objects.all()
     contexto = {"libros": libros}
     return render(request, "biblio/libros.html", contexto)
 
@@ -61,9 +132,9 @@ def librosForm(request):
             autor_libro = miForm.cleaned_data.get("autor")
             anio_libro = miForm.cleaned_data.get("anio")
             genero_libro = miForm.cleaned_data.get("genero")
-            libro = Libro(titulo=titulo_libro, autor=autor_libro, anio=anio_libro, genero=genero_libro)
+            libro = LibroUsuario(titulo=titulo_libro, autor=autor_libro, anio=anio_libro, genero=genero_libro)
             libro.save()
-            contexto = {"libros": Libro.objects.all() }
+            contexto = {"libros": LibroUsuario.objects.all() }
             return render(request, "biblio/libros.html", contexto)
     else:
         miForm = LibroForm()
@@ -72,7 +143,7 @@ def librosForm(request):
 
 @login_required
 def libroUpdate(request, id_libro):
-    libro = Libro.objects.get(id=id_libro)
+    libro = LibroUsuario.objects.get(id=id_libro)
     if request.method == "POST":
         miForm = LibroForm(request.POST)
         if miForm.is_valid():
@@ -81,7 +152,7 @@ def libroUpdate(request, id_libro):
             libro.anio = miForm.cleaned_data.get("anio")
             libro.genero = miForm.cleaned_data.get("genero")
             libro.save()
-            contexto = {"libros": Libro.objects.all() }
+            contexto = {"libros": LibroUsuario.objects.all() }
             return render(request, "biblio/libros.html", contexto)
     else:
         miForm = LibroForm(initial={"titulo": libro.titulo, "autor": libro.autor, "anio": libro.anio, "genero": libro.genero})
@@ -89,9 +160,9 @@ def libroUpdate(request, id_libro):
     return render(request, "biblio/librosForm.html", {"form": miForm})
 @login_required
 def libroDelete(request, id_libro):
-    libro = Libro.objects.get(id=id_libro)
+    libro = LibroUsuario.objects.get(id=id_libro)
     libro.delete()
-    contexto = {"libros": Libro.objects.all() }
+    contexto = {"libros": LibroUsuario.objects.all() }
     return render(request, "biblio/libros.html", contexto)
 
 ## Direcciones
@@ -121,20 +192,36 @@ def direccionesForm(request):
     
     return render(request, "biblio/direccionForm.html", {"form": miForm})
 
-## Buscar
 @login_required
-def buscarLibros(request):
-    return render(request, "negocio/buscarLibros.html")
-
-def encontrarlibros(request):
-    if request.GET["buscar"]:
-        libro = request.GET["buscar"]
-        titulos = Libro.objects.filter(titulo__icontains=libro)
-        contexto = {'libros': titulos}
+def direccionUpdate(request, id_direccion):
+    direcciones = Direccion.objects.get(id=id_direccion)
+    if request.method == "POST":
+        miForm = DireccionesForm(request.POST)
+        if miForm.is_valid():
+            direcciones_calle = miForm.cleaned_data.get("calle")
+            direcciones_altura = miForm.cleaned_data.get("altura")
+            direcciones_timbre = miForm.cleaned_data.get("timbre")
+            direcciones_barrio = miForm.cleaned_data.get("barrio")
+            direcciones_nombre = miForm.cleaned_data.get("nombre")
+            direcciones_telefono = miForm.cleaned_data.get("telefono")
+            direcciones = Direccion(calle=direcciones_calle, altura=direcciones_altura, timbre=direcciones_timbre, barrio=direcciones_barrio,
+                                  nombre=direcciones_nombre, telefono=direcciones_telefono)
+            direcciones.save()
+            contexto = {"direcciones": Direccion.objects.all() }
+            return render(request, "biblio/direcciones.html", contexto)
     else:
-        contexto = {'libros': Libro.objects.all()}
-        
-    return render(request, "negocio/libros.html", contexto)
+        miForm = DireccionesForm(initial={"calle": direcciones_calle, "altura": direcciones_altura, "timbre": direcciones_timbre, "barrio": direcciones_barrio,
+                                         "nombre": direcciones_nombre, "telefono": direcciones_telefono })
+
+    return render(request, "biblio/direccionForm.html", {"form": miForm})
+@login_required
+def direccionDelete(request, id_direccion):
+    direccion = Direccion.objects.get(id=id_direccion)
+    direccion.delete()
+    contexto = {"direcciones": Direccion.objects.all() }
+    return render(request, "biblio/direcciones.html", contexto)
+
+
 
 #___ Login / Logout / Registration
 
@@ -184,13 +271,9 @@ def crearUsuario(request):
 def editarUsuario(request):
     usuario = request.user
     if request.method == "POST":
-        miForm = EditarForm(request.POST)
+        miForm = EditarForm(request.POST,instance=usuario)
         if miForm.is_valid():
-            user = User.objects.get(username=usuario)
-            user.email = miForm.cleaned_data.get("email")
-            user.first_name = miForm.cleaned_data.get("nombre")
-            user.last_name = miForm.cleaned_data.get("apellido")
-            user.save()
+            miForm.save()
             return redirect(reverse("home"))
     else:
         miForm = EditarForm(instance=usuario)

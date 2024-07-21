@@ -1,0 +1,76 @@
+{% extends "biblio/index.html" %}
+
+{% load static %}
+
+{% block titulo %}
+<span>
+<h1>Navega por nuestro catalogo y elegí tu proxima aventura</h1
+>
+</span>
+{% endblock titulo %}
+
+
+
+{% block contenido %}
+<table>
+
+    <tr>
+
+        <td width="200"><h2>Catalogo</h2></td>
+        <form action="{% url 'catalogo' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+           
+        </form>
+        <td>
+
+            <a
+
+            href="{% url 'buscarLibros' %}"
+
+            class="btn btn-primary btn-sm"
+
+            ><i class="fa fa-search fa-lg" title="Buscar"> </i>
+
+            </a>
+
+        </td>        
+
+    </tr>
+
+</table>
+
+<table class="table table-striped"> 
+    <thead>
+        <tr>
+            <th>Portada</td>
+            <th>Id</th>
+            <th>Titulo</td>
+            <th>Autor</th>
+            <th>Anio</th>
+            <th>Genero</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for c in catalogo %}
+        <tr>
+            <td>
+                {% if c.portada %}
+                <img src="{{ MEDIA_URL }}{{ c.portada.url }}" alt="{{ c.titulo }}" width="100">
+                {% else %}
+                <img src="{% static 'images/default.png' %}" alt="Portada por defecto" width="100">
+                {% endif %}
+            </td>
+            <td>{{ c.id }}</td>
+            <td>{{ c.titulo }}</td>
+            <td>{{ c.autor }}</td>
+            <td>{{ c.anio }}</td>
+            <td>{{ c.genero }}</td>        
+        
+            
+            
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock contenido %}

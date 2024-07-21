@@ -16,7 +16,7 @@
     <thead>
         <tr>
 
-            <td width="200"><h2>Cursos</h2></td>
+            <td width="200"><h2>Direcciones</h2></td>
     
             <td>
     
@@ -41,6 +41,7 @@
             <th>Barrio</th>
             <th>Nombre</th>
             <th>Telefono</th>
+        
         </tr>
     </thead>
     <tbody>
@@ -53,6 +54,33 @@
             <td>{{ d.barrio }}</td>
             <td>{{ d.nombre }}</td>
             <td>{{ d.telefono }}</td>
+            <th>
+
+                <a
+
+                  href="{% url 'direccionUpdate' d.id %}"
+
+                  class="btn btn-primary"
+
+                  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+
+                  ><i class="fa-solid fa-pencil" title="Editar"></i>
+
+                </a>
+
+                <a
+
+                  href="{% url 'direccionDelete' d.id %}"
+
+                  class="btn btn-danger"
+
+                  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+
+                  ><i class="fa-solid fa-eraser" title="Borrar"></i>
+
+                </a>                
+
+            </th>
         </tr>
     {% endfor %}
     </tbody>
